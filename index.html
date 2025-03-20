@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Export Multiple Rows to Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <table id="dataTable" border="1">
+      <!-- add thead and tr contents here -->
+	   
+    </table>
+    <button onclick="exportToExcel()">Export to Excel</button>
+
+    <script>
+      function exportToExcel() {
+        let table = document.getElementById("dataTable");
+        let rows = table.getElementsByTagName("tr");
+        let data = [];
+
+        // Process header row separately to get the correct headers
+        let headerRow = rows[0];
+        let headerCells = headerRow.getElementsByTagName("th");
+        let headers = [];
+
+        for (let i = 0; i < headerCells.length; i++) {
+          headers.push(headerCells[i].textContent.trim());
+        }
+
+        data.push(headers); // Add headers as first row in Excel
+
+        // Process data rows (skip header row)
+        for (let i = 1; i < rows.length; i++) {
+          let cells = rows[i].getElementsByTagName("td");
+          let rowData = [];
+
+          for (let j = 0; j < cells.length; j++) {
+            rowData.push(cells[j].textContent.trim());
+          }
+
+          if (rowData.length > 0) {
+            // Only add non-empty rows
+            data.push(rowData);
+          }
+        }
+
+        // Convert to Excel format
+        let ws = XLSX.utils.aoa_to_sheet(data);
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+        // Save the file
+        XLSX.writeFile(wb, "March_payment.xlsx"); //name of the sheet which name the file as saved
+      }
+    </script>
+  </body>
+</html>
